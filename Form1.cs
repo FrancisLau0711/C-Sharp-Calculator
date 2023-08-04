@@ -6,6 +6,8 @@ using Button = System.Windows.Forms.Button;
 
 namespace Calculator
 {
+
+
     public partial class Form1 : Form
     {
         bool isOn = false;
@@ -17,7 +19,7 @@ namespace Calculator
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            Text = "Francis BOOM";
         }
 
         private void button_Click(object sender, EventArgs e)
@@ -102,6 +104,8 @@ namespace Calculator
             textBox.Text = result.ToString();
             textBox1.Text = result.ToString();
         }
+
+        const char a = 'a';
         public double bodmas(string expression)
         {
             string validOperators = "+-×÷^";
@@ -110,7 +114,17 @@ namespace Calculator
             Stack<char> operators = new Stack<char>();
             for (int i = 0; i < expression.Length; i++)
             {
-                char ch = expression[i];
+				char ch = expression[i];
+
+    //            switch (ch) 
+    //            {
+    //                case '1' when ch == '(': 
+    //                    { 
+    //                    }
+    //                    break;
+
+				//}
+
                 if (ch == '(')
                 {
                     operators.Push(ch);
