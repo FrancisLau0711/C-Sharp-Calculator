@@ -19,7 +19,7 @@ namespace Calculator
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Text = "Francis BOOM";
+            Text = "Francis Calculator";
         }
 
         private void button_Click(object sender, EventArgs e)
@@ -115,15 +115,6 @@ namespace Calculator
             for (int i = 0; i < expression.Length; i++)
             {
 				char ch = expression[i];
-
-    //            switch (ch) 
-    //            {
-    //                case '1' when ch == '(': 
-    //                    { 
-    //                    }
-    //                    break;
-
-				//}
 
                 if (ch == '(')
                 {
