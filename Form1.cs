@@ -14,15 +14,15 @@ namespace Calculator
         public int i = 0;
         public Form1()
         {
-            InitializeComponent();
+			InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Text = "Francis Calculator";
+			Text = "Calculator";
         }
 
-        private void button_Click(object sender, EventArgs e)
+        private void Button_Click(object sender, EventArgs e)
         {
             if (isOn)
             {
@@ -35,11 +35,11 @@ namespace Calculator
             }
         }
 
-        private void textBox_TextChanged(object sender, EventArgs e)
+        private void TextBox_TextChanged(object sender, EventArgs e)
         {
 
         }
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void TextBox1_TextChanged(object sender, EventArgs e)
         {
 
         }
@@ -52,7 +52,7 @@ namespace Calculator
             }
         }
 
-        private void memoryCLR_Click(object sender, EventArgs e)
+        private void MemoryCLR_Click(object sender, EventArgs e)
         {
             if (isOn)
             {
@@ -77,7 +77,14 @@ namespace Calculator
         private void On_Off_Toggle(object sender, EventArgs e)
         {
             isOn = !isOn;
-            _ = isOn == true ? textBox.Text = "0" : textBox.Text = "";
+            if (isOn == true)
+            {
+                textBox.Text = "0";
+            }
+            else
+            {
+                textBox.Text = "";
+            }
             textBox1.Text = "";
         }
 
@@ -92,7 +99,6 @@ namespace Calculator
 
         private void Equal_Click(object sender, EventArgs e)
         {
-            double result = 0;
             textBox.Text = textBox.Text.Replace("log(", "l");
             textBox.Text = textBox.Text.Replace("ln(", "n");
             textBox.Text = textBox.Text.Replace("sqrt(", "r");
@@ -100,13 +106,12 @@ namespace Calculator
             textBox.Text = textBox.Text.Replace("cos(", "c");
             textBox.Text = textBox.Text.Replace("tan(", "t");
             textBox.Text = textBox.Text.Replace("π", "3.141592654");
-            result = bodmas(textBox.Text);
+            double result = Bodmas(textBox.Text);
             textBox.Text = result.ToString();
             textBox1.Text = result.ToString();
         }
 
-        const char a = 'a';
-        public double bodmas(string expression)
+        public double Bodmas(string expression)
         {
             string validOperators = "+-×÷^";
             string specialOperators = "nlrsct";
@@ -127,19 +132,19 @@ namespace Calculator
                         char op = operators.Pop();
                         double param2 = numbers.Pop();
                         double param1 = numbers.Pop();
-                        double newValue = mathOperation(op, param1, param2);
+                        double newValue = MathOperation(op, param1, param2);
                         numbers.Push(newValue);
                     }
                     operators.Pop();
                 }
                 else if (validOperators.Contains(ch))
                 {
-                    while (operators.Count > 0 && priority(operators.Peek()) >= priority(ch))
+                    while (operators.Count > 0 && Priority(operators.Peek()) >= Priority(ch))
                     {
                         char op = operators.Pop();
                         double param2 = numbers.Pop();
                         double param1 = numbers.Pop();
-                        double newValue = mathOperation(op, param1, param2);
+                        double newValue = MathOperation(op, param1, param2);
                         numbers.Push(newValue);
                     }
                     operators.Push(ch);
@@ -152,7 +157,7 @@ namespace Calculator
                     string inner_expression = "";
                     while (ch != ')')
                     {
-                        inner_expression = inner_expression + ch;
+                        inner_expression += ch;
                         i++;
                         if (i == expression.Length)
                         {
@@ -160,8 +165,8 @@ namespace Calculator
                         }
                         ch = expression[i];
                     }
-                    double newValue = bodmas(inner_expression);
-                    newValue = mathOperation(last_op, 0, newValue);
+                    double newValue = Bodmas(inner_expression);
+                    newValue = MathOperation(last_op, 0, newValue);
                     numbers.Push(newValue);
                 }
                 else if (char.IsDigit(ch) || ch == '.')
@@ -169,7 +174,7 @@ namespace Calculator
                     string number = "";
                     while (char.IsDigit(ch) || ch == '.')
                     {
-                        number = number + ch;
+                        number += ch;
                         i++;
                         if (i == expression.Length)
                         {
@@ -187,12 +192,12 @@ namespace Calculator
                 var op = operators.Pop();
                 var param2 = numbers.Pop();
                 var param1 = numbers.Pop();
-                var newValue = mathOperation(op, param1, param2);
+                var newValue = MathOperation(op, param1, param2);
                 numbers.Push(newValue);
             }
             return numbers.Pop();
         }
-        public double mathOperation(char operation, double l_operand, double r_operand)
+        public double MathOperation(char operation, double l_operand, double r_operand)
         {
             switch (operation)
             {
@@ -210,7 +215,7 @@ namespace Calculator
                 default: return 0.0;
             }
         }
-        static int priority(char operation)
+        static int Priority(char operation)
         {
             switch (operation)
             {
@@ -226,6 +231,191 @@ namespace Calculator
                 case 'c': return 4;
                 case 't': return 4;
                 default: return 0;
+            }
+        }
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (isOn)
+            {
+                switch (e.KeyChar)
+                {
+					case '(':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "(";
+						break;
+					case ')':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += ")";
+						break;
+					case '0':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "0";
+                        break;
+					case '1':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "1";
+						break;
+					case '2':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "2";
+						break;
+					case '3':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "3";
+						break;
+					case '4':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "4";
+						break;
+					case '5':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "5";
+						break;
+					case '6':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "6";
+						break;
+					case '7':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "7";
+						break;
+					case '8':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "8";
+						break;
+					case '9':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "9";
+						break;
+					case '.':
+						textBox.Text += ".";
+						break;
+					case '+':
+						textBox.Text += "+";
+						break;
+					case '-':
+						textBox.Text += "-";
+						break;
+					case '*':
+						textBox.Text += "×";
+						break;
+					case '/':
+						textBox.Text += "÷";
+						break;
+					case '^':
+						textBox.Text += "^";
+						break;
+					case 'l':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "log(";
+						break;
+					case 'n':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "ln(";
+						break;
+					case 'r':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "sqrt(";
+						break;
+					case 's':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "sin(";
+						break;
+					case 'c':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "cos(";
+						break;
+					case 't':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "tan(";
+						break;
+                    case 'p':
+						if (textBox.Text == "0")
+						{
+							textBox.Text = textBox.Text.Remove(0, 1);
+						}
+						textBox.Text += "3.141592654";
+						break;
+                    case '=':
+						textBox.Text = textBox.Text.Replace("log(", "l");
+						textBox.Text = textBox.Text.Replace("ln(", "n");
+						textBox.Text = textBox.Text.Replace("sqrt(", "r");
+						textBox.Text = textBox.Text.Replace("sin(", "s");
+						textBox.Text = textBox.Text.Replace("cos(", "c");
+						textBox.Text = textBox.Text.Replace("tan(", "t");
+						textBox.Text = textBox.Text.Replace("π", "3.141592654");
+						double result = Bodmas(textBox.Text);
+						textBox.Text = result.ToString();
+						textBox1.Text = result.ToString();
+                        break;
+                    case ((char)Keys.Back):
+						if (isOn)
+						{
+							if (textBox.Text == "0")
+							{
+							}
+							else if (textBox.Text.Length > 0)
+							{
+								textBox.Text = textBox.Text.Remove(textBox.Text.Length - 1);
+							}
+						}
+                        break;
+				}
             }
         }
     }
