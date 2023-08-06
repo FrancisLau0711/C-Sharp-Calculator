@@ -225,8 +225,7 @@ namespace Calculator
 
         private void Equal_Click(object sender, EventArgs e)
         {
-            bool valid_expression = new bool();
-            valid_expression = VerifyExpression(textBox.Text);
+            bool valid_expression = VerifyExpression(textBox.Text);
             textBox.Text = textBox.Text.Replace("log(", "l");
             textBox.Text = textBox.Text.Replace("ln(", "n");
             textBox.Text = textBox.Text.Replace("sqrt(", "r");
