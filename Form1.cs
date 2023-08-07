@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 
 namespace Calculator
-{
-
+{ 
     public partial class Form1 : Form
     {
-        bool isOn = false;
+        bool isOn = false; // Toggle on off
         readonly Eval eval = new Eval();
         public Form1()
         {
@@ -19,15 +19,16 @@ namespace Calculator
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Text = "Calculator";
+            Text = "Calculator"; // Name of windows
         }
 
+        // Button for digit or special operators
         private void Button_Click(object sender, EventArgs e)
         {
             if (isOn)
             {
                 Button button = (Button)sender;
-                if (textBox.Text == "0")
+                if (textBox.Text == "0") 
                 {
                     textBox.Text = textBox.Text.Remove(0, 1);
                 }
@@ -60,6 +61,7 @@ namespace Calculator
             }
         }
 
+        // Backspace
         private void DEL_Click(object sender, EventArgs e)
         {
             if (isOn)
@@ -76,7 +78,7 @@ namespace Calculator
 
         private void On_Off_Toggle(object sender, EventArgs e)
         {
-            button18.Focus(); //equal button name
+            button18.Focus(); // As enter key is bind to this method on default, Focus() is used to change to Equal_Click() method
             isOn = !isOn;
             if (isOn == true)
             {
@@ -89,6 +91,7 @@ namespace Calculator
             textBox1.Text = "";
         }
 
+        // Button for valid operators and '.'
         private void Operation_Click(object sender, EventArgs e)
         {
             if (isOn)
@@ -98,17 +101,11 @@ namespace Calculator
             }
         }
 
-
+        // Validate expression and evaluate
         private void Equal_Click(object sender, EventArgs e)
         {
             bool valid_expression = eval.VerifyExpression(textBox.Text);
-            textBox.Text = textBox.Text.Replace("log(", "l");
-            textBox.Text = textBox.Text.Replace("ln(", "n");
-            textBox.Text = textBox.Text.Replace("sqrt(", "r");
-            textBox.Text = textBox.Text.Replace("sin(", "s");
-            textBox.Text = textBox.Text.Replace("cos(", "c");
-            textBox.Text = textBox.Text.Replace("tan(", "t");
-            textBox.Text = textBox.Text.Replace("π", "3.141592654");
+            textBox.Text = eval.ConvertExpression(textBox.Text);
             if (valid_expression)
             {
                 double result = eval.Bodmas(textBox.Text);
@@ -121,6 +118,7 @@ namespace Calculator
             }
         }
 
+        // Keyboard input
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (isOn)
@@ -276,7 +274,7 @@ namespace Calculator
                         {
                             textBox.Text = textBox.Text.Remove(0, 1);
                         }
-                        textBox.Text += "3.141592654";
+                        textBox.Text += "π";
                         break;
                     case ((char)Keys.Back):
                         if (isOn)
@@ -290,6 +288,12 @@ namespace Calculator
                             }
                         }
                         break;
+                    case ((char)Keys.Space):
+                        if (isOn)
+                        {
+                            textBox.Text = "0";
+                        }
+                        break;
                 }
             }
         }
@@ -297,6 +301,7 @@ namespace Calculator
 
     public class Eval
     {
+        // Priority Level
         private enum Precedence
         { 
             Default = 0,
@@ -317,7 +322,7 @@ namespace Calculator
         {
             int j = new int();
             string validOperators = "+-×÷^";
-            string specialOperators = "nlrsct";
+            string specialOperators = "nlrsct"; //symbols for Log, Ln, Sqrt, Sin, Cos and Tan respectively
             string temp = expression;
             Stack<int> open_parenthesis = new Stack<int>();
             Stack<int> closed_parenthesis = new Stack<int>();
@@ -327,21 +332,8 @@ namespace Calculator
             }
 
             // Check parenthesis
-            while (temp.Contains('('))
-            {
-                int i = temp.IndexOf('(') + j;
-                open_parenthesis.Push(i);
-                temp = temp.Remove(i - j, 1);
-                j++;
-            }
-            j = 0;
-            while (temp.Contains(')'))
-            {
-                int i = temp.IndexOf(')') + j;
-                closed_parenthesis.Push(i);
-                temp = temp.Remove(i - j, 1);
-                j++;
-            }
+            GetIndexes('(', temp, open_parenthesis);
+            GetIndexes(')', temp, closed_parenthesis);
             if (open_parenthesis.Count != closed_parenthesis.Count)
             {
                 return false;
@@ -350,35 +342,30 @@ namespace Calculator
             {
                 int last_closed_index = closed_parenthesis.Pop();
                 int last_open_index = open_parenthesis.Pop();
-                if (last_closed_index - last_open_index < 1)
+                if (last_closed_index - last_open_index < 1) //The sequence of parenthesis is incorrect
                 {
                     return false;
                 }
             }
 
             //Check valid operators, special operators and decimal
-            temp = expression;
-            temp = temp.Replace("log(", "l");
-            temp = temp.Replace("ln(", "n");
-            temp = temp.Replace("sqrt(", "r");
-            temp = temp.Replace("sin(", "s");
-            temp = temp.Replace("cos(", "c");
-            temp = temp.Replace("tan(", "t");
-            temp = temp.Replace("π", "3.141592654");
+            temp = expression; //Replace back parenthesis
+            temp = ConvertExpression(temp);
+
             for (int i = 0; i < temp.Length; i++)
             {
                 char ch = temp[i];
                 if (validOperators.Contains(ch))
                 {
+                    // Valid operators are at last character
                     if (i + 1 == temp.Length)
                     {
                         return false;
                     }
-                    if (Char.IsDigit(temp[i + 1]) || temp[i + 1] == '(' || specialOperators.Contains(temp[i + 1]))
+                    else if (Char.IsDigit(temp[i + 1]) || temp[i + 1] == '(' || specialOperators.Contains(temp[i + 1])) // Next Character Condition
                     {
-                        if (Char.IsDigit(temp[i - 1]) || temp[i - 1] == ')')
+                        if (Char.IsDigit(temp[i - 1]) || temp[i - 1] == ')') // Last Character Condition
                         {
-
                         }
                         else
                         {
@@ -392,13 +379,13 @@ namespace Calculator
                 }
                 else if (specialOperators.Contains(ch))
                 {
-                    if (temp[i + 1] == '(' || Char.IsDigit(temp[i + 1]))
+                    if (temp[i + 1] == '(' || Char.IsDigit(temp[i + 1])) // Next Character Condition
                     {
                         if (i == 0)
                         {
                             continue;
                         }
-                        else if (validOperators.Contains(temp[i - 1]) || temp[i - 1] == '(')
+                        if (validOperators.Contains(temp[i - 1]) || temp[i - 1] == '(') // Last Character Condition
                         {
                         }
                         else
@@ -423,7 +410,7 @@ namespace Calculator
                         j++;
                         if (i + j == temp.Length)
                         {
-                            break;
+                            return true;
                         }
                     }
                     if (temp[i + j] == '.')
@@ -435,6 +422,7 @@ namespace Calculator
             return true;
         }
 
+        // Evaluate expression
         public double Bodmas(string expression)
         {
             string validOperators = "+-×÷^";
@@ -445,11 +433,11 @@ namespace Calculator
             {
                 char ch = expression[i];
 
-                if (ch == '(')
+                if (ch == '(') // Parenthesis highest priority
                 {
                     operators.Push(ch);
                 }
-                else if (ch == ')')
+                else if (ch == ')') // Most Inner parenthesis first then to outer
                 {
                     while (operators.Peek() != '(')
                     {
@@ -463,7 +451,8 @@ namespace Calculator
                 }
                 else if (validOperators.Contains(ch))
                 {
-                    while (operators.Count > 0 && Priority(operators.Peek()) >= Priority(ch))
+                    // Only calculate first op and params when second operator is reached
+                    while (operators.Count > 0 && Priority(operators.Peek()) >= Priority(ch)) //Eval according to priority
                     {
                         char op = operators.Pop();
                         double param2 = numbers.Pop();
@@ -478,7 +467,7 @@ namespace Calculator
                     char last_op = ch;
                     i++;
                     ch = expression[i];
-                    string inner_expression = "";
+                    string inner_expression = ""; // Inner expression between parenthesis
                     while (ch != ')')
                     {
                         inner_expression += ch;
@@ -489,11 +478,11 @@ namespace Calculator
                         }
                         ch = expression[i];
                     }
-                    double newValue = Bodmas(inner_expression);
-                    newValue = MathOperation(last_op, 0, newValue);
+                    double newValue = Bodmas(inner_expression); // Evaluate again the inner parenthesis first before evaluate the special operation
+                    newValue = MathOperation(last_op, 0, newValue); 
                     numbers.Push(newValue);
                 }
-                else if (char.IsDigit(ch) || ch == '.')
+                else if (char.IsDigit(ch) || ch == '.') // Get numbers 
                 {
                     string number = "";
                     while (char.IsDigit(ch) || ch == '.')
@@ -511,17 +500,18 @@ namespace Calculator
                 }
             }
 
-            while (operators.Count > 0)
+            while (operators.Count > 0) // Solve others lower priority
             {
-                var op = operators.Pop();
-                var param2 = numbers.Pop();
-                var param1 = numbers.Pop();
-                var newValue = MathOperation(op, param1, param2);
+                char op = operators.Pop();
+                double param2 = numbers.Pop();
+                double param1 = numbers.Pop();
+                double newValue = MathOperation(op, param1, param2);
                 numbers.Push(newValue);
             }
             return numbers.Pop();
         }
 
+        // Return priorit according to enum precedence
         private int Priority(char operation)
         {
             switch (operation)
@@ -557,6 +547,31 @@ namespace Calculator
                 case 't': return Math.Tan(r_operand * Math.PI / 180);
                 default: return 0;
             }
+        }
+
+        // Get indexes of certain character
+        private void GetIndexes(char ch, string expression, Stack<int> op)
+        {
+            int j = 0;
+            while (expression.Contains(ch))
+            {
+                int i = expression.IndexOf(ch) + j;
+                op.Push(i);
+                expression = expression.Remove(i - j, 1);
+                j++;
+            }
+        }
+
+        public string ConvertExpression(string expression)
+        {
+            expression = expression.Replace("log(", "l");
+            expression = expression.Replace("ln(", "n");
+            expression = expression.Replace("sqrt(", "r");
+            expression = expression.Replace("sin(", "s");
+            expression = expression.Replace("cos(", "c");
+            expression = expression.Replace("tan(", "t");
+            expression = expression.Replace("π", "3.141592654");
+            return expression;
         }
     }
 }
