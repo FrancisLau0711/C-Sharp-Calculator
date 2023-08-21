@@ -562,6 +562,7 @@ namespace Calculator
             }
         }
 
+        // Convert expression suitable for evaluation
         public string ConvertExpression(string expression)
         {
             expression = expression.Replace("log(", "l");
