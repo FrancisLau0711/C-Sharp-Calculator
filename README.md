@@ -1,4 +1,4 @@
-# C-Sharp-Calculator
+# CSharp-Calculator
 This project includes a software implementation of a basic calculator. 
 The project have a graphical user interface (GUI) built using Windows Forms (WinForms). 
 The GUI allows users to input numbers and perform calculations using buttons input.
